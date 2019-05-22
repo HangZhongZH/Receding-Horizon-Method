@@ -1,0 +1,33 @@
+function [y_best, iforder] = predMC_return(y, h_pred, h_ctrl, MC_num, r, stock_end_last)
+
+%all the combinations
+y2 = combvec(y, y, y, y, y, y, y);
+
+
+costfee = zeros(7 ^ h_ctrl, 1);
+
+%if need re-order
+if stock_end_last > r
+    iforder = 0;
+else
+    iforder = 1;
+end
+
+%caulculate cost fee for each combination
+for i = 1: size(costfee, 1)
+
+    costfee(i) = costfee_predweeks(stock_end_last, h_pred, h_ctrl, y2(:, i), r, MC_num);
+end
+[~, idx] = min(costfee);
+
+
+if iforder == 1
+    y_best = y2(1, idx);
+% set y to 0 when do not re-order
+else
+    y_best = 0;
+end
+
+
+end
+
